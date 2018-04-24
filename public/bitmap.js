@@ -1,3 +1,5 @@
+let True = true;
+
 function Bitmap(width, height) {
     this.grid = [];
     for(var row = 0; row < height; row++) {
@@ -28,9 +30,15 @@ Bitmap.prototype.render = function(target_element) {
     }
 };
 
-Bitmap.prototype.setColor = function(row, col, color) {
+Bitmap.prototype.setColor = function(row, col, color, answer) {
     this.grid[row][col] = color;
     this.cells[row][col].style.background = color;
+
+    if (answer === true){
+        newCommands(row, col, color)
+        console.log("it ran")
+        console.log(answer)
+    }
 }
 
 Bitmap.prototype.handleEvent = function(event) {
@@ -38,7 +46,7 @@ Bitmap.prototype.handleEvent = function(event) {
         var row = parseInt(event.currentTarget.dataset.row);
         var col = parseInt(event.currentTarget.dataset.col);
         if(tool === "draw") {
-            this.setColor(row, col, paint_color);
+            this.setColor(row, col, paint_color, True);
         } else if(tool == "fill") {
             this.fill(row, col, paint_color);
         }

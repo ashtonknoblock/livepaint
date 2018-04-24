@@ -18,3 +18,4 @@ Bitmap.prototype.fill = function(row, col, new_color) {
         }
     }
 }
+
