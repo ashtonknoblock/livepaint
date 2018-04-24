@@ -6,13 +6,15 @@ app.use(express.static('public'))
 app.use(express.json())
 
 const responseData = {
-    reset: [],
-    clientUpdates: []
+    updates: [],
+    reset: []
 }
+
 app.post('/updates', function (req, res) {
     res.statusCode = 200;
-    console.log(req.body.updates)
-    responseData.updates = req.body.updates
+    req.body.clientUpdates.forEach(element => {
+        responseData.updates.push(element)
+    });
     res.send(responseData)
 })
 

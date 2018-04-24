@@ -2,12 +2,11 @@
 let now = Date.now();
 let interval = 2000;
 let errors = 0;
-let updates = [];
+let clientUpdates = [];
 
-function newCommands (row, col, new_color) {
+function newCommands(row, col, new_color) {
     let arr = [row, col, new_color]
-    updates.push(arr)
-    console.log("it ran newCommands")
+    clientUpdates.push(arr)
 }
 
 function fetchUpdates() {
@@ -17,28 +16,40 @@ function fetchUpdates() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            updates
+            clientUpdates,
+            clientCounter
         })
     }
+
+    let clientCounter = 0;
     fetch("/updates", postOptions)
         .then(response => response.json())
         .then(data => {
-            console.log(data.clientUpdates)
+
             let runCommand = false;
             let newRow = 0;
             let newCol = 0;
             let newColor = "";
-
-            bitmap.setColor(10, 12, "red", runCommand)
-            updates = data.reset
-        })
-
-        // .catch(function(error) {
-        //     errors++
-        //     if (errors == 2) {
-        //         clearInterval(exicutionTimer)
-        //     }
-        //   });
+            let goodCommands = data.updates.slice(clientCounter)
+            for(let i = 0; i < data.updates.length; i++){
+                newRow = data.updates[i][0];
+                newCol = data.updates[i][1];
+                newColor = data.updates[i][2];
+                clientCounter++
+                // console.log("row:", newRow, "col", newCol, "color", newColor);
+               
+                bitmap.setColor(newRow, newCol, newColor, runCommand);
+                bitmap.fill(newRow, newCol, newColor)
+            }
+            
+            console.log(clientCounter)
+            console.log(goodCommands)
+            clientUpdates = data.reset
+        }).catch(function (error) {
+            errors++
+            if (errors == 2) {
+                clearInterval(exicutionTimer)
+            }
+        });
 }
 var exicutionTimer = setInterval(fetchUpdates, interval);
-

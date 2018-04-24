@@ -36,8 +36,6 @@ Bitmap.prototype.setColor = function(row, col, color, answer) {
 
     if (answer === true){
         newCommands(row, col, color)
-        console.log("it ran")
-        console.log(answer)
     }
 }
 
