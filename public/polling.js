@@ -1,8 +1,8 @@
 // Add logic to this script to poll server every second for updated pixels.
-let now = Date.now();
-let interval = 2000;
+let interval = 1000;
 let errors = 0;
 let clientUpdates = [];
+let commandCounter = 0;
 
 function newCommands(row, col, new_color) {
     let arr = [row, col, new_color]
@@ -16,23 +16,22 @@ function fetchUpdates() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            clientUpdates
+            clientUpdates,
+            commandCounter
         })
     }
 
     fetch("/updates", postOptions)
         .then(response => response.json())
         .then(data => {
-
             let runCommand = false;
-            let newRow = 0;
-            let newCol = 0;
-            let newColor = "";
-            for(let i = 0; i < data.updates.length; i++){
-                newRow = data.updates[i][0];
-                newCol = data.updates[i][1];
-                newColor = data.updates[i][2];
-                // console.log("row:", newRow, "col", newCol, "color", newColor);
+            // commandCounter keeps track of the last updates that came from the server so
+            // we can send back the last updates that the client has seen
+            commandCounter = data.updates.length;
+            for (let i = 0; i < data.newestData.length; i++) {
+                let newRow = data.newestData[i][0];
+                let newCol = data.newestData[i][1];
+                let newColor = data.newestData[i][2];
                 bitmap.setColor(newRow, newCol, newColor, runCommand);
                 bitmap.fill(newRow, newCol, newColor)
             }

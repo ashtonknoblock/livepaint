@@ -7,7 +7,8 @@ app.use(express.json())
 
 const responseData = {
     updates: [],
-    reset: []
+    reset: [],
+    newestData: []
 }
 
 app.post('/updates', function (req, res) {
@@ -15,6 +16,9 @@ app.post('/updates', function (req, res) {
     req.body.clientUpdates.forEach(element => {
         responseData.updates.push(element)
     });
+    // Take the amount of updates the client has seen and sends back only the newest commands
+    let goodCommands = responseData.updates.slice(req.body.commandCounter, responseData.updates.length)
+    responseData.newestData = goodCommands
     res.send(responseData)
 })
 
